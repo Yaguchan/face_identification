@@ -82,11 +82,11 @@ def trainer(num_epochs, model, loader_dict, optimizer, outdir):
         print(f'Val loss   : {val_loss}, Val Acc   :{val_acc}')
         if best_val_loss > val_loss:
             best_val_loss = val_loss
-            torch.save(model.state_dict(), os.path.join(outdir, 'best_val_loss_model.pth'))
+            torch.save(model.state_dict(), os.path.join(outdir, 'best_val_loss_model.pt'))
 
 
 def tester(model, loader_dict, modeldir, device):
-    model.load_state_dict(torch.load(os.path.join(modeldir, 'best_val_loss_model.pth')))
+    model.load_state_dict(torch.load(os.path.join(modeldir, 'best_val_loss_model.pt')))
     model.to(device)
     test_loss, test_acc = test(model, loader_dict['test'], 'test', modeldir)
     print(f'Test loss  : {test_loss}, Test Acc  :{test_acc}')
