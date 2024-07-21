@@ -2,7 +2,7 @@
 ・顔の切り出しは[YOLOv8-face](https://github.com/akanametov/yolo-face)を使用  
 ・顔識別は[facenet-pytorch](https://github.com/timesler/facenet-pytorch)を使用
 
-## データ加工(データ拡張用)
+## データ加工（データ拡張用）
 解像度を変更した画像を作成
 ```
 python preprocess/data_resize.py
