@@ -20,3 +20,4 @@ python inference/img2names.py
 ```
 ### サンプル
 ![sample1_plot](https://github.com/user-attachments/assets/6a2e37c6-e4fb-43e4-9989-86794be744ec)
+![sample3_plot](https://github.com/user-attachments/assets/999fa289-bbd4-4b6e-ab3a-741cdf4ad2df)
