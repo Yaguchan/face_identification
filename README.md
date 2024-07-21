@@ -16,4 +16,4 @@ python inference_sample.py
 ```
 ### サンプル
 サンプル①(data/sample/sample1_plot.jpg)
-![sample1_plot](https://github.com/user-attachments/assets/e11dace5-19f0-471d-941d-145cc861c1e2)
+![sample1_plot](https://github.com/user-attachments/assets/6a2e37c6-e4fb-43e4-9989-86794be744ec)
