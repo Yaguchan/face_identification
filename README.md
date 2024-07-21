@@ -19,5 +19,4 @@ python run.py
 python inference/img2names.py
 ```
 ### サンプル
-data/sample/sample1_plot.jpg
 ![sample1_plot](https://github.com/user-attachments/assets/6a2e37c6-e4fb-43e4-9989-86794be744ec)
