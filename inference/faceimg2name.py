@@ -9,23 +9,13 @@ from utils import seed_everything
 from torchvision import transforms
 
 
-# python inference_sample.py
-MODELDIR = './model/mobilenetv2/twitter_aug_all'
+# python inference/faceimg2name.py
+FACENET_MODEL = './weights/facenet/resize_all.pt'
 IMG_PATH = './data/icrawler/images/face/MizukiYamauchi/6.jpg'
-DEVICE = 'cuda:1'
-MEMBER_LIST = './complete_member.txt'
-# MEMBER_LIST = './member.txt'
+MEMBER_LIST = './member_list/all.txt'
+DEVICE = 'cpu'
 
 
-# resnet
-"""
-transform = transforms.Compose([
-    transforms.Resize(256),
-    transforms.CenterCrop(224),                                  
-    transforms.ToTensor(),                                                      
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-])
-"""
 # facenet
 transform = transforms.Compose([
     transforms.Resize((160, 160)),
@@ -49,7 +39,7 @@ def main():
     # model
     device = torch.device(DEVICE)
     model = CNNModel(num_classes, device)
-    model.load_state_dict(torch.load(os.path.join(MODELDIR, 'best_val_loss_model.pth')))
+    model.load_state_dict(torch.load(FACENET_MODEL, map_location=device))
     model.to(device)
     model.eval()
     

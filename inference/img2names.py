@@ -10,10 +10,10 @@ from torchvision import transforms
 
 # python inference/img2names.py
 YOLO_MODEL = './weights/yolo/yolov8l-face.pt'
-FACENET_MODEL = './weights/facenet/all.pth'
-IMG_PATH = './data/sample/sample2.jpg'
-DEVICE = 'cpu'
+FACENET_MODEL = './weights/facenet/resize_all.pt'
+IMG_PATH = './data/sample/sample1.jpg'
 MEMBER_LIST = './member_list/all.txt'
+DEVICE = 'cpu'
 
 
 # facenet
@@ -48,13 +48,13 @@ def main():
     
     # inference
     image = cv2.imread(IMG_PATH)
+    pil_image = Image.open(IMG_PATH)
     boxes = yolo.predict(image)[0].boxes
     xyxy_list = boxes.xyxy.tolist()
     conf_list = boxes.conf.tolist()
     idx_list = []
     for xyxy in xyxy_list:
-        pil_image = Image.fromarray(image).crop(xyxy)
-        face_image = transform(pil_image)
+        face_image = transform(pil_image.crop(xyxy))
         prob, idx = facenet.inference(face_image.unsqueeze(0))
         idx_list.append(idx.item())
     
