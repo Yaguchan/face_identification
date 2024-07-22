@@ -10,7 +10,7 @@ python preprocess/data_resize.py
 ## 学習
 学習に使用するデータとそのメンバーリストを与えて学習
 ```
-python run.py
+python train.py
 ```
 ## 推論
 ### 実行
