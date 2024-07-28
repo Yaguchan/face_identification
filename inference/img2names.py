@@ -13,14 +13,14 @@ from PIL import Image, ImageDraw, ImageFont
 
 # python inference/img2names.py
 YOLO_MODEL = './weights/yolo/yolov8l-face.pt'
-# FACENET_MODEL = './weights/facenet/resize_all.pt'
-FACENET_MODEL = './weights/facenet/resize_64thsingle.pt'
-IMG_PATH = './data/sample/sample3.jpg'
-# MEMBER_LIST = './member_list/all.txt'
-MEMBER_LIST = './member_list/64thsingle.txt'
+FACENET_MODEL = './weights/facenet/aug2_all.pt'
+# FACENET_MODEL = './weights/facenet/resize_64thsingle.pt'
+IMG_PATH = './data/sample/sample2.jpg'
+MEMBER_LIST = './member_list/all.txt'
+# MEMBER_LIST = './member_list/64thsingle.txt'
 MEMBER_ENJP = './member_list/member.csv'
 FONT_PATH = './data/font/NotoSansJP-Black.ttf'
-JP = False
+JP = True
 DEVICE = 'cpu'
 
 
