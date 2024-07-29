@@ -2,16 +2,24 @@
 ・顔の切り出しは[YOLOv8-face](https://github.com/akanametov/yolo-face)を使用  
 ・顔識別は[facenet-pytorch](https://github.com/timesler/facenet-pytorch)を使用
 
-## データ加工（データ拡張用）
-解像度を変更した画像を作成
+## データ加工
+### 解像度の変更
 ```
 python preprocess/data_resize.py
 ```
+様々なデータ拡張手法（回転）によって
+### データ拡張（学習用）
+```
+python preprocess/data_aug.py
+```
+
+
 ## 学習
 学習に使用するデータとそのメンバーリストを与えて学習
 ```
 python train.py
 ```
+
 ## 推論
 ### 実行
 画像にメンバーの名前を割り当てる
