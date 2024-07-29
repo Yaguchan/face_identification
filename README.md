@@ -7,7 +7,6 @@
 ```
 python preprocess/data_resize.py
 ```
-様々なデータ拡張手法（回転）によって
 ### データ拡張（学習用）
 ```
 python preprocess/data_aug.py
