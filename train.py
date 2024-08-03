@@ -1,41 +1,35 @@
 import os
 import torch
 import torch.nn as nn
-from model import CNNModel
+from model import FaceNet
 from dataset import IdolData
 from utils import trainer, tester, seed_everything
 from torchvision import transforms
 from torch.utils.data import DataLoader
 
 
-# python run.py
-NAME = 'twitter'
-DATADIR = f'./data/{NAME}/images/face'
-AUG_DIR = None #'./data/twitter/images/face'
-MODELDIR = f'./model/facenet/{NAME}_all'
-MEMBER_LIST = './complete_member.txt'
-# MEMBER_LIST = './member.txt'
+# python train.py
+DATANAME = 'twitter'
+LISTNAME = '60thsingle'
+DATADIR = f'./data/{DATANAME}/images/face'
+# DATADIR = f'./data/{DATANAME}_resize/32/images/face'
+AUG_DIR = f'./data/{DATANAME}_aug10/images/face'
+AUG_SIZE = 32 # 2+6*N / 2+10*N
+MODELDIR = f'./model/facenet/{LISTNAME}_{DATANAME}_aug5'
+MEMBER_LIST = f'./member_list/{LISTNAME}.txt'
 DEVICE = 'cuda:1'
-LR = 1e-4
+LR = 1e-5
 EPOCH = 15
+BATCHSIZE = 32
 TRAIN = True
 
 
-# resnet
-"""
-transform = transforms.Compose([
-    transforms.Resize(256),
-    transforms.CenterCrop(224),                                                   # 画像サイズをリサイズ
-    transforms.ToTensor(),                                                        # Tensorに変換
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # 標準化
-])
-"""
-# facenet
 transform = transforms.Compose([
     transforms.Resize((160, 160)),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
 ])
+
 
 def main():
     
@@ -50,25 +44,23 @@ def main():
     
     # dataset
     # データの呼び出し
-    train_dataset = IdolData(data_dir=DATADIR, member_list=MEMBER_LIST, transform=transform, split='train', aug_dir=AUG_DIR)
+    print('---------------------------')
+    train_dataset = IdolData(data_dir=DATADIR, member_list=MEMBER_LIST, transform=transform, split='train', aug_dir=AUG_DIR, aug_size=AUG_SIZE)
     val_dataset = IdolData(data_dir=DATADIR, member_list=MEMBER_LIST, transform=transform, split='val')
     test_dataset = IdolData(data_dir=DATADIR, member_list=MEMBER_LIST, transform=transform, split='test')
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=BATCHSIZE, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=BATCHSIZE, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=BATCHSIZE, shuffle=True)
     loader_dict = {'train': train_loader, 'val': val_loader, 'test': test_loader}
+    print('---------------------------')
+    print(f'train: {len(train_dataset)}')
+    print(f'val  : {len(val_dataset)}')
+    print(f'test : {len(test_dataset)}')
+    print('---------------------------')
     
     # model     
-    model = CNNModel(train_dataset.num_classes, device)
+    model = FaceNet(train_dataset.num_classes, device)
     model.to(device)
-    
-    # freeze
-    """
-    for name, param in model.named_parameters():
-        if name != 'model.fc.weight' and name != 'model.fc.bias':
-        # if name != 'model.fc.weight' and name != 'model.fc.bias' and 'layer4' in name:
-            param.requires_grad = False
-    """
     
     # optimizer
     parameters = model.parameters()

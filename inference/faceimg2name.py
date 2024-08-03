@@ -4,7 +4,7 @@ import random
 import numpy as np
 from PIL import Image
 from tqdm import tqdm
-from model import CNNModel
+from model import FaceNet
 from utils import seed_everything
 from torchvision import transforms
 
@@ -38,7 +38,7 @@ def main():
     
     # model
     device = torch.device(DEVICE)
-    model = CNNModel(num_classes, device)
+    model = FaceNet(num_classes, device)
     model.load_state_dict(torch.load(FACENET_MODEL, map_location=device))
     model.to(device)
     model.eval()

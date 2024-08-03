@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from model import CNNModel
+from model import FaceNet
 from ultralytics import YOLO
 from utils import seed_everything
 from torchvision import transforms
@@ -15,12 +15,12 @@ from PIL import Image, ImageDraw, ImageFont
 YOLO_MODEL = './weights/yolo/yolov8l-face.pt'
 FACENET_MODEL = './weights/facenet/aug2_all.pt'
 # FACENET_MODEL = './weights/facenet/resize_64thsingle.pt'
-IMG_PATH = './data/sample/sample2.jpg'
+IMG_PATH = './data/sample/sample3.jpg'
 MEMBER_LIST = './member_list/all.txt'
 # MEMBER_LIST = './member_list/64thsingle.txt'
 MEMBER_ENJP = './member_list/member.csv'
 FONT_PATH = './data/font/NotoSansJP-Black.ttf'
-JP = True
+JP = False
 DEVICE = 'cpu'
 
 
@@ -55,7 +55,7 @@ def main():
     # model
     device = torch.device(DEVICE)
     yolo = YOLO(YOLO_MODEL)
-    facenet = CNNModel(num_classes, device)
+    facenet = FaceNet(num_classes, device)
     facenet.load_state_dict(torch.load(FACENET_MODEL, map_location=device))
     facenet.to(device)
     facenet.eval()
@@ -90,7 +90,7 @@ def main():
             draw.text((x1 + 5, y1 - text_height - 8), member, font=font)
         else:
             cv2.rectangle(image, (x1, y1), (x2, y2), (B, G, R), 2)
-            cv2.rectangle(image, (x1 - 1, y1 - 20), (x1 + len(member) * 12, y1), (B, G, R), -1)
+            cv2.rectangle(image, (x1 - 1, y1 - 20), (x1 + len(member) * 10, y1), (B, G, R), -1)
             cv2.putText(image, member, (x1 + 5, y1 - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
     if JP:
         pil_image.save(IMG_PATH.replace('.jpg', '_jp.jpg'))
