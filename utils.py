@@ -1,10 +1,12 @@
 import os
+import cv2
 import torch
 import random
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+from PIL import Image
 from sklearn.metrics import confusion_matrix
 
 
@@ -17,13 +19,15 @@ def seed_everything(seed):
     os.environ['PYTHONHASHSEED'] = str(seed)
 
 
-def save_cm(preds, labels, class_names=None, savedir='./'):
+# cofusion matrix
+def save_cm(preds, labels, class_names=None, savedir='./', font_size=6):
     cm = confusion_matrix(labels, preds)
+    cm_prob = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
     plt.figure(figsize=(10, 8))
     if class_names == None:
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+        sns.heatmap(cm_prob, annot=True, fmt='.2f', cmap='Blues', annot_kws={"size": font_size})
     else:
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
+        sns.heatmap(cm_prob, annot=True, fmt='.2f', cmap='Blues', xticklabels=class_names, yticklabels=class_names, annot_kws={"size": font_size})
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
     plt.title('Confusion Matrix')
@@ -31,6 +35,7 @@ def save_cm(preds, labels, class_names=None, savedir='./'):
     plt.close()
 
 
+# train
 def train(model, optimizer, data_loader):
     model.train()
     total_loss = 0
@@ -49,6 +54,7 @@ def train(model, optimizer, data_loader):
     return total_loss, total_acc
 
 
+# val, test
 def test(model, data_loader, split, outdir=None):
     model.eval()
     total_loss = 0
@@ -72,6 +78,7 @@ def test(model, data_loader, split, outdir=None):
     return total_loss, total_acc
 
 
+# trainer -> train, val
 def trainer(num_epochs, model, loader_dict, optimizer, outdir):
     best_val_loss = 1e10
     for epoch in range(num_epochs):
@@ -85,6 +92,7 @@ def trainer(num_epochs, model, loader_dict, optimizer, outdir):
             torch.save(model.state_dict(), os.path.join(outdir, 'best_val_loss_model.pt'))
 
 
+# tester -> test
 def tester(model, loader_dict, modeldir, device):
     model.load_state_dict(torch.load(os.path.join(modeldir, 'best_val_loss_model.pt')))
     model.to(device)

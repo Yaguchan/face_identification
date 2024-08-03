@@ -3,6 +3,7 @@ import cv2
 import torch
 import numpy as np
 from PIL import Image
+from utils import pil_img_resize
 from torch.utils.data import Dataset
 
 
@@ -10,7 +11,7 @@ sizes = ['base', '32', '64', '128']
 
 
 class IdolData(Dataset):
-    def __init__(self, data_dir, member_list, transform, split, aug_dir=None):
+    def __init__(self, data_dir, member_list, transform, split, aug_dir=None, aug_size=None):
         self.data_dir = data_dir
         self.transform = transform
         with open(member_list, 'r', encoding='utf-8') as f:
@@ -28,28 +29,27 @@ class IdolData(Dataset):
             val_size = int(N * 0.1)
             test_size = N - train_size - val_size
             if split == 'train':
+                print(f'{class_name}: {N}')
                 if aug_dir == None:
                     self.images.extend(img_paths[:train_size])
                     self.labels.extend([self.class_to_idx[class_name]]*train_size)
                 else:
                     aug_img_paths = [os.path.join(aug_dir, class_name, img_name) for img_name in img_names if img_name != '.DS_Store']
                     for aug_img_path in aug_img_paths[:train_size]:
+                        """
                         for size in sizes:
                             self.images.append(aug_img_path.replace('.jpg', f'_{size}.jpg'))
-                        """
-                        for i in range(32):
-                            self.images.append(aug_img_path.replace('.jpg', f'_{i}.jpg'))
-                        self.labels.extend([self.class_to_idx[class_name]]*32)
-                        """
                         self.labels.extend([self.class_to_idx[class_name]]*len(sizes))
-                        
+                        """
+                        for i in range(aug_size):
+                            self.images.append(aug_img_path.replace('.jpg', f'_{i}.jpg'))
+                        self.labels.extend([self.class_to_idx[class_name]]*aug_size)
             elif split == 'val':
                 self.images.extend(img_paths[train_size:train_size+val_size])
                 self.labels.extend([self.class_to_idx[class_name]]*val_size)
             else:
                 self.images.extend(img_paths[train_size+val_size:])
                 self.labels.extend([self.class_to_idx[class_name]]*test_size)
-        print(f'{split}: {len(self.images)}')
                 
     def __len__(self):
         return len(self.images)
@@ -57,6 +57,7 @@ class IdolData(Dataset):
     def __getitem__(self, idx):
         img_path = self.images[idx]
         image = Image.open(img_path).convert('RGB')
+        # image = pil_img_resize(image)
         if self.transform: image = self.transform(image)
         label = self.labels[idx]
         return image, label
