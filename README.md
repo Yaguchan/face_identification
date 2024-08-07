@@ -21,7 +21,7 @@ python train.py
 
 ## 推論
 ### 実行
-画像にメンバーの名前を割り当てる
+画像に含まれる人物の顔からメンバーの名前をプロット
 ```
 python inference/img2names.py
 ```
