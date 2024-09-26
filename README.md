@@ -1,5 +1,5 @@
 # face_identification
-・顔の切り出しは[YOLOv8-face](https://github.com/akanametov/yolo-face)を使用  
+・顔の切り出しはMTCNNを使用  
 ・顔識別は[facenet-pytorch](https://github.com/timesler/facenet-pytorch)を使用
 
 ## データ加工
