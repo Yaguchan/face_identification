@@ -1,8 +1,7 @@
 # face_identification
-画像からアイドルの顔検出/識別を行い、プロットした画像を作成
+・画像からアイドルの顔検出/識別を行い、プロットした画像を作成  
+・顔検出はMTCNN、顔識別は[facenet-pytorch](https://github.com/timesler/facenet-pytorch)を使用
 ![title](https://github.com/user-attachments/assets/aad75e6f-0831-4bc8-9574-7c04afe4e644)
-・顔の切り出しはMTCNNを使用  
-・顔識別は[facenet-pytorch](https://github.com/timesler/facenet-pytorch)を使用
 
 ## データ加工
 ### 解像度の変更
