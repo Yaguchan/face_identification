@@ -16,7 +16,8 @@ python preprocess/data_aug.py
 
 
 ## 学習
-以下を設定して、FaceNetをファインチューニング
+以下を設定して、FaceNetをファインチューニング  
+事前学習モデルは`weights/facenet`から利用可能
 <details><summary>設定項目</summary>
 
 ・`DATANAME`    ：学習に使用するデータ  
