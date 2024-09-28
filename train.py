@@ -10,18 +10,21 @@ from torch.utils.data import DataLoader
 
 # python train.py
 DATANAME = 'twitter'
-LISTNAME = '60thsingle'
-DATADIR = f'./data/{DATANAME}/images/face'
-# DATADIR = f'./data/{DATANAME}_resize/32/images/face'
-AUG_DIR = f'./data/{DATANAME}_aug10/images/face'
-AUG_SIZE = 32 # 2+6*N / 2+10*N
-MODELDIR = f'./model/facenet/{LISTNAME}_{DATANAME}_aug5'
+# LISTNAME = 'kamiseven'
+LISTNAME = '61stsingle'
+DATADIR = f'./data/{DATANAME}/2024/mtcnn_face'
+# DATADIR = f'./data/{DATANAME}_resize/32/images/mtcnn_face'
+AUG_DIR = None #f'./data/{DATANAME}_aug10/2024/mtcnn_face'
+# AUG_DIR = f'./data/{DATANAME}_scale2/images/yolo_face'
+AUG_SIZE = 62 # 2+6*N / 2+10*N
+# MODELDIR = f'./weights/facenet/{LISTNAME}_{DATANAME}_aug10'
+MODELDIR = f'./weights/facenet/{LISTNAME}_{DATANAME}_mtcnn_aug10'
 MEMBER_LIST = f'./member_list/{LISTNAME}.txt'
 DEVICE = 'cuda:1'
 LR = 1e-5
-EPOCH = 15
+EPOCH = 10
 BATCHSIZE = 32
-TRAIN = True
+TRAIN = False
 
 
 transform = transforms.Compose([

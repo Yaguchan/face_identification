@@ -7,9 +7,6 @@ from utils import pil_img_resize
 from torch.utils.data import Dataset
 
 
-sizes = ['base', '32', '64', '128']
-
-
 class IdolData(Dataset):
     def __init__(self, data_dir, member_list, transform, split, aug_dir=None, aug_size=None):
         self.data_dir = data_dir
@@ -20,27 +17,28 @@ class IdolData(Dataset):
         self.class_to_idx = {self.classes[i]: i for i in range(len(self.classes))}
         self.images = []
         self.labels = []
+        list_len = []
+        # ダウンサンプリング
+        for class_name in self.classes:
+            img_names = os.listdir(os.path.join(data_dir, class_name))
+            img_names = [img_name for img_name in img_names if img_name != '.DS_Store']
+            list_len.append(len(img_names))
+        N = min(list_len)
         for class_name in self.classes:
             img_names = os.listdir(os.path.join(data_dir, class_name))
             img_names.sort()
             img_paths = [os.path.join(data_dir, class_name, img_name) for img_name in img_names if img_name != '.DS_Store']
-            N = len(img_names)
             train_size = int(N * 0.8)
             val_size = int(N * 0.1)
-            test_size = N - train_size - val_size
+            test_size = len(img_paths) - train_size - val_size
             if split == 'train':
-                print(f'{class_name}: {N}')
+                print(f'{class_name}: {len(img_names)}')
                 if aug_dir == None:
                     self.images.extend(img_paths[:train_size])
                     self.labels.extend([self.class_to_idx[class_name]]*train_size)
                 else:
                     aug_img_paths = [os.path.join(aug_dir, class_name, img_name) for img_name in img_names if img_name != '.DS_Store']
                     for aug_img_path in aug_img_paths[:train_size]:
-                        """
-                        for size in sizes:
-                            self.images.append(aug_img_path.replace('.jpg', f'_{size}.jpg'))
-                        self.labels.extend([self.class_to_idx[class_name]]*len(sizes))
-                        """
                         for i in range(aug_size):
                             self.images.append(aug_img_path.replace('.jpg', f'_{i}.jpg'))
                         self.labels.extend([self.class_to_idx[class_name]]*aug_size)
@@ -48,7 +46,7 @@ class IdolData(Dataset):
                 self.images.extend(img_paths[train_size:train_size+val_size])
                 self.labels.extend([self.class_to_idx[class_name]]*val_size)
             else:
-                self.images.extend(img_paths[train_size+val_size:])
+                self.images.extend(img_paths[train_size+val_size:train_size+val_size+test_size])
                 self.labels.extend([self.class_to_idx[class_name]]*test_size)
                 
     def __len__(self):
