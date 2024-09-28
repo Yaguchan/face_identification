@@ -5,24 +5,24 @@
 
 
 ## データ加工
-#### 顔画像切り取り
+（Xで取得した）単一メンバーの画像から顔画像の切り取り
 ```
 python preprocess/cut_face.py
 ```
-#### データ拡張（学習用）
+データ拡張
 ```
 python preprocess/data_aug.py
 ```
 
 
 ## 学習
-以下を設定して実行
+以下を設定して、FaceNetをファインチューニング
 <details><summary>設定項目</summary>
 
 ・`DATANAME`    ：学習に使用するデータ  
 ・`LISTNAME`    ：メンバーのリスト  
 ・`AUG_DIR`     ：データ拡張を行ったデータ  
-・`AUG_SIZE`    ：1枚の画像に対してデータ拡張で増やす枚数
+・`AUG_SIZE`    ：1枚の画像に対してデータ拡張で増やす枚数  
 ・`DEVICE`      ：cuda or mps or cpu  
 
 </details>
@@ -33,8 +33,20 @@ python train.py
 
 
 ## 推論
-#### 実行
-画像に含まれる人物の顔からメンバーの名前をプロット
+以下を設定して、画像に含まれる人物の顔からメンバーの名前をプロット
+<details><summary>設定項目</summary>
+
+・`MODELPATH`   ：FaceNet model  
+・`IMG_PATH`    ：プロットする画像  
+・`MEMBER_LIST` ：メンバーのリスト  
+・`MEMBER_ENJP` ：メンバーの名前の日本語/英語データ  
+・`FONT_PATH`   ：使用するフォント  
+・`FONT_SIZE`   ：使用するフォントサイズ（normal or large）  
+・`DEVICE`      ：cuda or mps or cpu  
+・`JP`          ：プロット（日本語 or 英語）
+
+</details>
+
 ```
 python inference/img2names.py
 ```
