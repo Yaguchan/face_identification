@@ -15,10 +15,10 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 # python inference/img2names.py
-MODELDIR = './weights/facenet/kamiseven_twitter_mtcnn_aug10'
-IMG_PATH = './data/sample/river.jpg'
-MEMBER_LIST = './member_list/kamiseven.txt'
-MEMBER_ENJP = './member_list/member_2012.csv'
+MODELPATH = './weights/facenet/63rdsingle.pt'
+IMG_PATH = './data/sample/sample1.jpg'
+MEMBER_LIST = './member_list/63rdsingle.txt'
+MEMBER_ENJP = './member_list/member.csv'
 FONT_PATH = './data/font/NotoSansJP-Black.ttf'
 DEVICE = 'cpu'
 JP = True
@@ -56,7 +56,7 @@ def main():
     device = torch.device(DEVICE)
     # facenet
     model = FaceNet(num_classes, device)
-    model.load_state_dict(torch.load(os.path.join(MODELDIR, 'best_val_loss_model.pt')))
+    model.load_state_dict(torch.load(MODELPATH, map_location=torch.device(DEVICE)))
     model.to(device)
     model.eval()
     # mtcnn
