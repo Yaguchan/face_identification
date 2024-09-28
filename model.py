@@ -13,7 +13,7 @@ class FaceNet(nn.Module):
         model = InceptionResnetV1(classify=True, pretrained='vggface2', num_classes=output_dim)
         self.model = model
         self.criterion = nn.CrossEntropyLoss()
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Softmax(dim=1)
     
     def forward(self, batch):
         inputs, labels = batch
