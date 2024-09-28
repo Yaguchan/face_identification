@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(os.pardir)
 import torch
 import random
 import numpy as np
@@ -10,10 +12,10 @@ from torchvision import transforms
 
 
 # python inference/faceimg2name.py
-FACENET_MODEL = './weights/facenet/resize_all.pt'
+MODELDIR = './weights/facenet/61thsingle_twitter'
 IMG_PATH = './data/icrawler/images/face/MizukiYamauchi/6.jpg'
-MEMBER_LIST = './member_list/all.txt'
-DEVICE = 'cpu'
+DEVICE = 'cuda:1'
+MEMBER_LIST = './member_list/61thsingle.txt'
 
 
 # facenet
@@ -39,12 +41,12 @@ def main():
     # model
     device = torch.device(DEVICE)
     model = FaceNet(num_classes, device)
-    model.load_state_dict(torch.load(FACENET_MODEL, map_location=device))
+    model.load_state_dict(torch.load(os.path.join(MODELDIR, 'best_val_loss_model.pt')))
     model.to(device)
     model.eval()
     
     # inference
-    image = Image.open(IMG_PATH).convert('RGB')
+    image = Image.open(IMG_PATH)
     image = transform(image)
     prob, pred_idx = model.inference(image.unsqueeze(0))
     print(f'idx: {pred_idx.item()}, prob: {prob.item()}')

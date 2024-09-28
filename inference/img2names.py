@@ -1,27 +1,27 @@
+import os
 import cv2
+import sys
+sys.path.append(os.pardir)
 import torch
+import random
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+from tqdm import tqdm
 from model import FaceNet
-from ultralytics import YOLO
+from facenet_pytorch import MTCNN
 from utils import seed_everything
 from torchvision import transforms
 from PIL import Image, ImageDraw, ImageFont
 
 
 # python inference/img2names.py
-YOLO_MODEL = './weights/yolo/yolov8l-face.pt'
-FACENET_MODEL = './weights/facenet/aug2_all.pt'
-# FACENET_MODEL = './weights/facenet/resize_64thsingle.pt'
-IMG_PATH = './data/sample/sample3.jpg'
-MEMBER_LIST = './member_list/all.txt'
-# MEMBER_LIST = './member_list/64thsingle.txt'
-MEMBER_ENJP = './member_list/member.csv'
+MODELDIR = './weights/facenet/kamiseven_twitter_mtcnn_aug10'
+IMG_PATH = './data/sample/river.jpg'
+MEMBER_LIST = './member_list/kamiseven.txt'
+MEMBER_ENJP = './member_list/member_2012.csv'
 FONT_PATH = './data/font/NotoSansJP-Black.ttf'
-JP = False
 DEVICE = 'cpu'
+JP = True
 
 
 # facenet
@@ -54,23 +54,32 @@ def main():
     
     # model
     device = torch.device(DEVICE)
-    yolo = YOLO(YOLO_MODEL)
-    facenet = FaceNet(num_classes, device)
-    facenet.load_state_dict(torch.load(FACENET_MODEL, map_location=device))
-    facenet.to(device)
-    facenet.eval()
+    # facenet
+    model = FaceNet(num_classes, device)
+    model.load_state_dict(torch.load(os.path.join(MODELDIR, 'best_val_loss_model.pt')))
+    model.to(device)
+    model.eval()
+    # mtcnn
+    mtcnn = MTCNN(
+        image_size=160, margin=0, min_face_size=20,
+        thresholds=[0.6, 0.7, 0.7], factor=0.709, post_process=True,
+        device=device
+    )
     
     # inference
+    xyxy_list = []
+    idx_list = []
     image = cv2.imread(IMG_PATH)
     pil_image = Image.open(IMG_PATH)
-    boxes = yolo.predict(image)[0].boxes
-    xyxy_list = boxes.xyxy.tolist()
-    conf_list = boxes.conf.tolist()
-    idx_list = []
-    for xyxy in xyxy_list:
-        face_image = transform(pil_image.crop(xyxy))
-        prob, idx = facenet.inference(face_image.unsqueeze(0))
-        idx_list.append(idx.item())
+    boxes, _ = mtcnn.detect(pil_image)
+    if boxes is not None:
+        for i, box in enumerate(boxes):
+            x1, y1, x2, y2 = [int(b) for b in box]
+            face_image = transform(pil_image.crop((x1, y1, x2, y2)))
+            prob, idx = model.inference(face_image.unsqueeze(0))
+            idx_list.append(idx.item())
+            xyxy_list.append((x1, y1, x2, y2))
+    print(idx_list, xyxy_list)
     
     # plot
     draw = ImageDraw.Draw(pil_image)
@@ -82,21 +91,21 @@ def main():
         B, G, R = map(int, member_to_color[member])
         if JP:
             member = en2jp[member]
-            draw.rectangle([x1, y1, x2, y2], outline=(R,G,B), width=2)
+            draw.rectangle([x1, y1, x2, y2], outline=(R,G,B), width=3)
             bbox = draw.textbbox((x1, y1), member, font=font)
             text_width = bbox[2] - bbox[0]
             text_height = bbox[3] - bbox[1]
             draw.rectangle([x1 - 1, y1 - text_height - 10, x1 + text_width + 5, y1], fill=(R,G,B))
             draw.text((x1 + 5, y1 - text_height - 8), member, font=font)
         else:
-            cv2.rectangle(image, (x1, y1), (x2, y2), (B, G, R), 2)
+            cv2.rectangle(image, (x1, y1), (x2, y2), (B, G, R), 3)
             cv2.rectangle(image, (x1 - 1, y1 - 20), (x1 + len(member) * 10, y1), (B, G, R), -1)
             cv2.putText(image, member, (x1 + 5, y1 - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
     if JP:
         pil_image.save(IMG_PATH.replace('.jpg', '_jp.jpg'))
     else:
         cv2.imwrite(IMG_PATH.replace('.jpg', '_en.jpg'), image)
-    
+        
 
 if __name__ == '__main__':
     main()
