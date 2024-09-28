@@ -16,10 +16,11 @@ from PIL import Image, ImageDraw, ImageFont
 
 # python inference/img2names.py
 MODELPATH = './weights/facenet/63rdsingle.pt'
-IMG_PATH = './data/sample/sample1.jpg'
+IMG_PATH = './data/sample/pair1.jpg'
 MEMBER_LIST = './member_list/63rdsingle.txt'
 MEMBER_ENJP = './member_list/member.csv'
 FONT_PATH = './data/font/NotoSansJP-Black.ttf'
+FONT_SIZE = 'large' # normal/large
 DEVICE = 'cpu'
 JP = True
 
@@ -46,11 +47,17 @@ def main():
     colors = np.random.randint(0, 255, size=(num_classes, 3))
     member_to_color = {member: color for member, color in zip(classes, colors)}
     
+    # font size
+    if FONT_SIZE == 'large':
+        font_list = [60, -3, -30, 15, 5, -32]
+    else:
+        font_list = [20, -1, -10, 5, 5, -8]
+    
     # class_jp
     if JP:
         df = pd.read_csv(MEMBER_ENJP)
         en2jp = df.set_index('en')['jp'].to_dict()
-        font = ImageFont.truetype(FONT_PATH, 20)
+        font = ImageFont.truetype(FONT_PATH, font_list[0])
     
     # model
     device = torch.device(DEVICE)
@@ -79,7 +86,7 @@ def main():
             prob, idx = model.inference(face_image.unsqueeze(0))
             idx_list.append(idx.item())
             xyxy_list.append((x1, y1, x2, y2))
-    print(idx_list, xyxy_list)
+    # print(idx_list, xyxy_list)
     
     # plot
     draw = ImageDraw.Draw(pil_image)
@@ -89,14 +96,15 @@ def main():
         x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
         member = idx_to_class[idx]
         B, G, R = map(int, member_to_color[member])
+        # B, G, R = 0, 0, 255
         if JP:
             member = en2jp[member]
             draw.rectangle([x1, y1, x2, y2], outline=(R,G,B), width=3)
             bbox = draw.textbbox((x1, y1), member, font=font)
             text_width = bbox[2] - bbox[0]
             text_height = bbox[3] - bbox[1]
-            draw.rectangle([x1 - 1, y1 - text_height - 10, x1 + text_width + 5, y1], fill=(R,G,B))
-            draw.text((x1 + 5, y1 - text_height - 8), member, font=font)
+            draw.rectangle([x1 + font_list[1], y1 - text_height + font_list[2], x1 + text_width + font_list[3], y1], fill=(R,G,B))
+            draw.text((x1 + font_list[4], y1 - text_height + font_list[5]), member, font=font)
         else:
             cv2.rectangle(image, (x1, y1), (x2, y2), (B, G, R), 3)
             cv2.rectangle(image, (x1 - 1, y1 - 20), (x1 + len(member) * 10, y1), (B, G, R), -1)
