@@ -3,8 +3,13 @@
 ・顔識別は[FaceNet](https://github.com/timesler/facenet-pytorch)を使用
 ![title](https://github.com/user-attachments/assets/aad75e6f-0831-4bc8-9574-7c04afe4e644)
 
+## 実行
+## 環境構築
+```
+conda env create -f env.yaml
+```
 
-## データ加工
+### データ加工
 （Xで取得した）単一メンバーの画像から顔画像の切り取り
 ```
 python preprocess/cut_face.py
@@ -14,14 +19,7 @@ python preprocess/cut_face.py
 python preprocess/data_aug.py
 ```
 
-
-## 環境構築
-```
-conda env create -f env.yaml
-```
-
-
-## 学習
+### 学習
 以下を設定して、FaceNetをファインチューニング  
 事前学習モデルは`weights/facenet`から利用可能
 <details><summary>設定項目</summary>
@@ -38,8 +36,7 @@ conda env create -f env.yaml
 python train.py
 ```
 
-
-## 推論
+### 推論
 以下を設定して、画像に含まれる人物の顔からメンバーの名前をプロット
 <details><summary>設定項目</summary>
 
@@ -60,8 +57,8 @@ python inference/img2names.py
 
 
 ## サンプル
-#### 単一メンバー
+### 単一メンバー
 ![single_img](https://github.com/user-attachments/assets/9aa4becc-a0ac-4780-93a0-c54c3651d842)
-#### 複数メンバー
+### 複数メンバー
 ![sample1_jp](https://github.com/user-attachments/assets/0fe74957-5d7d-47eb-8242-8ad3ddfbbea3)
 ![sample2_jp](https://github.com/user-attachments/assets/b3cfd422-daa9-4f92-bc13-d288ddb2695c)
