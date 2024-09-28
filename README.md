@@ -15,6 +15,12 @@ python preprocess/data_aug.py
 ```
 
 
+## 環境構築
+```
+conda env create -f env.yaml
+```
+
+
 ## 学習
 以下を設定して、FaceNetをファインチューニング  
 事前学習モデルは`weights/facenet`から利用可能
