@@ -25,7 +25,8 @@ python preprocess/data_aug.py
 ・`AUG_SIZE`    ：1枚の画像に対してデータ拡張で増やす枚数
 ・`DEVICE`      ：cuda or mps or cpu  
 
-</details>  
+</details>
+
 ```
 python train.py
 ```
