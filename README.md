@@ -18,11 +18,13 @@ python preprocess/data_aug.py
 ## 学習
 以下を設定して実行
 <details><summary>設定項目</summary>
+
 ・`DATANAME`    ：学習に使用するデータ  
 ・`LISTNAME`    ：メンバーのリスト  
 ・`AUG_DIR`     ：データ拡張を行ったデータ  
 ・`AUG_SIZE`    ：1枚の画像に対してデータ拡張で増やす枚数
 ・`DEVICE`      ：cuda or mps or cpu  
+
 </details>
 ```
 python train.py
